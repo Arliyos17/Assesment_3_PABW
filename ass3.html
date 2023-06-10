@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jadwal Pertandingan</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div id="tabs">
+          <ul>
+            <li><a href="#tabs-1">Datatable</a></li>
+            <li><a href="#tabs-2">Tambah Data</a></li>
+            <li><a href="#tabs-3">Update Data</a></li>
+          </ul>
+          <div id="tabs-1">
+            <table border="1" id="tabel">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Tim Kandang</th>
+                  <th>Tim Tandang</th>
+                  <th>Tanggal</th>
+                  <th>Jam</th>
+                  <th>Liga</th>
+                  <th>Stadion</th>
+                  <th>Harga Tiket</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div id="tabs-2">
+            <form id="form-tambah" class="row g-3">
+              <div class="col-md-6">
+                <label for="id_jadwal" class="form-label">ID:</label>
+                <input type="text" id="id" name="id_jadwal" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tim1" class="form-label">Tim Kandang:</label>
+                <input type="text" id="tim1" name="tim1" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tim2" class="form-label">Tim Tandang:</label>
+                <input type="text" id="tim2" name="tim2" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tanggal" class="form-label">Tanggal:</label>
+                <input type="date" id="tanggal" name="tanggal" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="waktu" class="form-label">Jam:</label>
+                <input type="time" id="waktu" name="waktu" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="liga" class="form-label">Liga:</label>
+                <input type="text" id="liga" name="liga" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="stadion" class="form-label">Stadion:</label>
+                <input type="text" id="stadion" name="stadion" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="harga" class="form-label">Harga Tiket:</label>
+                <input type="text" id="harga" name="harga" class="form-control">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Tambah</button>
+              </div>
+            </form>
+          </div>
+          
+          <div id="tabs-3">
+            <form id="form-update" class="row g-3">
+              <div class="col-md-6">
+                <label for="id_jadwal" class="form-label">ID:</label>
+                <input type="text" id="id-update" name="id_jadwal" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tim1" class="form-label">Tim Kandang:</label>
+                <input type="text" id="tim1-update" name="tim1" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tim2" class="form-label">Tim Tandang:</label>
+                <input type="text" id="tim2-update" name="tim2" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="tanggal" class="form-label">Tanggal:</label>
+                <input type="date" id="tanggal-update" name="tanggal" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="waktu" class="form-label">Jam:</label>
+                <input type="time" id="waktu-update" name="waktu" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="liga" class="form-label">Liga:</label>
+                <input type="text" id="liga-update" name="liga" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="stadion" class="form-label">Stadion:</label>
+                <input type="text" id="stadion-update" name="stadion" class="form-control">
+              </div>
+              <div class="col-md-6">
+                <label for="harga" class="form-label">Harga Tiket:</label>
+                <input type="text" id="harga-update" name="harga" class="form-control">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </form>
+          </div>          
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+  <script>
+    $(document).ready(function() {
+      $("#tabs").tabs();
+
+      $.ajax({
+        url: "http://localhost/pabw/index.php",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+          console.log(data);
+          var table = $('#tabel').DataTable({
+            "data": data.results,
+            "columns": [
+              { "data": "id_jadwal" },
+              { "data": "tim1" },
+              { "data": "tim2" },
+              { "data": "tanggal" },
+              { "data": "waktu" },
+              { "data": "liga" },
+              { "data": "stadion" },
+              { "data": "harga" },
+              {
+                "data": null,
+                "defaultContent": "<button class='update-button'>Update</button> <button class='delete-button'>Delete</button>"
+              }
+            ],
+            serverSide: false
+          });
+
+          $('#tabel').on('click', '.update-button', function() {
+            var data = table.row($(this).parents('tr')).data();
+            var id = data.id_jadwal;
+            var tim1 = data.tim1;
+            var tim2 = data.tim2;
+            var tanggal = data.tanggal;
+            var waktu = data.waktu;
+            var liga = data.liga;
+            var stadion = data.stadion;
+            var harga = data.harga;
+
+            $("#tabs").tabs("option", "active", 2);
+            $("#id-update").val(id);
+            $("#tim1-update").val(tim1);
+            $("#tim2-update").val(tim2);
+            $("#tanggal-update").val(tanggal);
+            $("#waktu-update").val(waktu);
+            $("#liga-update").val(liga);
+            $("#stadion-update").val(stadion);
+            $("#harga-update").val(harga);
+          });
+
+          $('#tabel').on('click', '.delete-button', function() {
+            var data = table.row($(this).parents('tr')).data();
+            var id = data.id_jadwal;
+
+            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+              $.ajax({
+                url: "http://localhost/pabw/methodDELETE.php",
+                type: "DELETE",
+                data: { id_jadwal: id }, // Send the ID of the data to be deleted
+                success: function(response) {
+                  alert("Data berhasil dihapus!");
+                  console.log(response);
+                  setTimeout(function() {
+                  location.reload(); // Refresh the page after displaying the alert
+                }, 1000);
+                }
+              });
+            }
+          });
+        }
+      });
+
+      $("#form-tambah").validate({
+        rules: {
+          id_jadwal: "required",
+          tim1: "required",
+          tim2: "required",
+          tanggal: "required",
+          waktu: "required",
+          liga: "required",
+          stadion: "required",
+          harga: "required"
+        },
+        messages: {
+          id_jadwal: "Tolong Isi Kolom ID",
+          tim1: "Tolong Isi Kolom Tim Kandang",
+          tim2: "Tolong Isi Kolom Tim Tandang",
+          tanggal: "Tolong Isi Kolom Tanggal",
+          waktu: "Tolong Isi Kolom Waktu",
+          liga: "Tolong Isi Kolom Liga",
+          stadion: "Tolong Isi Kolom Stadion",
+          harga: "Tolong Isi Kolom Harga"
+        },
+        submitHandler: function(form) {
+          var formData = $(form).serialize();
+          $.ajax({
+            url: "http://localhost/pabw/methodPOST.php",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+              alert("Data berhasil ditambahkan!");
+              console.log(response);
+              setTimeout(function() {
+                location.reload(); // Refresh the page after displaying the alert
+              }, 1000);
+            }
+          });
+        }
+      });
+
+      $("#form-update").validate({
+        rules: {
+          id_jadwal: "required",
+          tim1: "required",
+          tim2: "required",
+          tanggal: "required",
+          waktu: "required",
+          liga: "required",
+          stadion: "required",
+          harga: "required"
+        },
+        messages: {
+          id_jadwal: "Tolong Isi Kolom ID",
+          tim1: "Tolong Isi Kolom Tim Kandang",
+          tim2: "Tolong Isi Kolom Tim Tandang",
+          tanggal: "Tolong Isi Kolom Tanggal",
+          waktu: "Tolong Isi Kolom Waktu",
+          liga: "Tolong Isi Kolom Liga",
+          stadion: "Tolong Isi Kolom Stadion",
+          harga: "Tolong Isi Kolom Harga"
+        },
+        submitHandler: function(form) {
+          var formData = $(form).serialize();
+          $.ajax({
+            url: "http://localhost/pabw/methodPUT.php",
+            type: "PUT",
+            data: formData,
+            success: function(response) {
+              alert("Data berhasil diperbarui!");
+              console.log(response);
+              setTimeout(function() {
+                location.reload(); // Refresh the page after displaying the alert
+              }, 1000);
+            }
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
